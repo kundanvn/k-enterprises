@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+}
+h2 {
+  color: #0000ed;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 11pt;
+}
+h1 {
+  color: #252525;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 8pt;
+}
+p {
+  color: #252525;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 11pt;
+  margin: 0pt;
+}
+.s1 {
+  color: #ababab;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 13pt;
+}
+.first-letter {
+  font-size: 20pt;
+}
+.s2 {
+  color: #252525;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 11pt;
+}
+.s3 {
+  color: #ababab;
+  font-family: Verdana, sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 11pt;
+}
+.s4 {
+  color: #252525;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 15pt;
+}
+
+.horizontal-line {
+  height: 0;
+  width: 100%;
+  border-top: 1px solid gray;
+  margin-top: 10px;
+}
