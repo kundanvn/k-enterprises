@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ViewPage, DocList } from "./pages";
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
             element={<ViewPage />}
           />
           <Route exact path="/" element={<DocList />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </HashRouter>
     </div>

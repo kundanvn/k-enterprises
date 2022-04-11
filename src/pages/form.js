@@ -18,6 +18,11 @@ import {
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+function randomIntFromInterval(min, max) {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
   const [formData, setFromData] = useState({
     emmll: "",
@@ -46,9 +51,12 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
   });
 
   const [defaultId, setDefaultId] = useState("");
+  const [serialNo, setSerialNo] = useState("");
+  const [serialNoRecordId, setSerialNoRecordId] = useState("");
 
   const dataCollectionRef = collection(fireDb, "pdf-records");
   const defaultCollectionRef = collection(fireDb, "defaults");
+  const serialNoRef = collection(fireDb, "serial-no");
 
   const handleFormChange = (field, value) => {
     setFromData((prevState) => ({ ...prevState, [field]: value }));
@@ -60,12 +68,23 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
     setFromData(res.data());
   };
 
+  const updateSerialNo = () => {
+    const serialNoDoc = doc(fireDb, "serial-no", serialNoRecordId);
+    updateDoc(serialNoDoc, { currentValue: serialNo })
+      .then(() => {
+        toast("Added document successfully!", { type: "success" });
+        onClose();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const handleSubmit = () => {
     if (type === "add") {
-      addDoc(dataCollectionRef, formData)
+      addDoc(dataCollectionRef, { ...formData, emmll: serialNo })
         .then((res) => {
-          toast("Added document successfully!", { type: "success" });
-          onClose();
+          updateSerialNo();
         })
         .catch((e) => {
           toast("Something went wrong!", { type: "error" });
@@ -89,6 +108,7 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
             onClose();
           })
           .catch((e) => {
+            console.log({ e });
             toast("Something went wrong", { type: "warning" });
           });
       } else {
@@ -119,11 +139,28 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
       });
   };
 
+  const getSerialNo = () => {
+    getDocs(serialNoRef)
+      .then((res) => {
+        const data = res.docs;
+        if (data.length > 0) {
+          const dataObj = data[0].data();
+          const serialNo = dataObj.currentValue + randomIntFromInterval(7, 40);
+          setSerialNoRecordId(data[0].id);
+          setSerialNo(serialNo);
+        }
+      })
+      .catch((e) => {
+        toast("Unable to load serial number");
+      });
+  };
+
   useState(() => {
     if (type === "edit") {
       getData();
     } else {
       getDefaults();
+      getSerialNo();
     }
   }, []);
 
@@ -137,85 +174,105 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
         </strong>
       </ModalHeader>
       <ModalBody>
+        {type === "edit" && (
+          <Input
+            label="1. eMM11."
+            value={formData.emmll}
+            onChange={(e) => handleFormChange("emmll", e.target.value)}
+            readOnly
+          />
+        )}
         <Input
-          label="eMMll"
-          value={formData.emmll}
-          onChange={(e) => handleFormChange("emmll", e.target.value)}
-        />
-        <Input
-          label="eMMll Generated On"
-          value={formData.emmll_generation_date}
-          onChange={(e) =>
-            handleFormChange("emmll_generation_date", e.target.value)
-          }
-        />
-        <Input
-          label="eMMll Valid Upto"
-          value={formData.emmll_valid_upto}
-          onChange={(e) => handleFormChange("emmll_valid_upto", e.target.value)}
-        />
-        <hr />
-        <Input
-          label="Name of Lessee/ Permit Holder"
+          label="2. Name Of Lessee / Permit Holder:"
           value={formData.name_of_lessee}
           onChange={(e) => handleFormChange("name_of_lessee", e.target.value)}
         />
         <Input
-          label="Mobile Number Of Lessee"
+          label="3. Mobile Number Of Lessee:s"
           value={formData.lessee_mob_no}
           onChange={(e) => handleFormChange("lessee_mob_no", e.target.value)}
         />
         <Input
-          label="Lessee Id"
+          label="4. Tin Number:"
+          value={formData.tin_no}
+          onChange={(e) => handleFormChange("tin_no", e.target.value)}
+        />
+
+        <Input
+          label="5. Lessee Id: "
           value={formData.lessee_id}
           onChange={(e) => handleFormChange("lessee_id", e.target.value)}
         />
-
-        <hr />
         <Input
-          label="Tehsil Of Lease"
-          value={formData.tehsil_of_lease}
-          onChange={(e) => handleFormChange("tehsil_of_lease", e.target.value)}
-        />
-        <Input
-          label="District Of Lease"
-          value={formData.district_of_lease}
-          onChange={(e) =>
-            handleFormChange("district_of_lease", e.target.value)
-          }
-        />
-
-        <Input
-          label="Lease Details[Address,Village,(Gata/Khand),Area]"
+          label="6. Lease Details [Address,Village,(Gata/Khand),Area]:"
           value={formData.lessee_details}
           onChange={(e) => handleFormChange("lessee_details", e.target.value)}
           textarea
         />
         <Input
-          label="Tin Number"
-          value={formData.tin_no}
-          onChange={(e) => handleFormChange("tin_no", e.target.value)}
+          label="7. Tehsil Of Lease: "
+          value={formData.tehsil_of_lease}
+          onChange={(e) => handleFormChange("tehsil_of_lease", e.target.value)}
         />
-        <hr />
 
         <Input
-          label="Name Of Mineral"
+          label="8. District Of Lease: "
+          value={formData.district_of_lease}
+          onChange={(e) =>
+            handleFormChange("district_of_lease", e.target.value)
+          }
+        />
+        <Input
+          label="9. QTY Transported in (Cubic Meter/Ton for Silica sand):"
+          value={formData.qyt_transported}
+          onChange={(e) => handleFormChange("qyt_transported", e.target.value)}
+        />
+
+        <Input
+          label="10. Name Of Mineral: "
           value={formData.mineral_name}
           onChange={(e) => handleFormChange("mineral_name", e.target.value)}
         />
+
         <Input
-          label="Loading From"
+          label="11. Loading From:"
           value={formData.loading_from}
           onChange={(e) => handleFormChange("loading_from", e.target.value)}
         />
 
         <Input
-          label="Destination (Delivery Address)"
+          label="12. Destination (Delivery Address):"
           value={formData.destination}
           onChange={(e) => handleFormChange("destination", e.target.value)}
         />
+
         <Input
-          label="Destination District"
+          label="13. Distance(Approx in K.M.): "
+          value={formData.distance}
+          onChange={(e) => handleFormChange("distance", e.target.value)}
+        />
+        <Input
+          label="14. eMM11 Generated On:"
+          value={formData.emmll_generation_date}
+          onChange={(e) =>
+            handleFormChange("emmll_generation_date", e.target.value)
+          }
+        />
+
+        <Input
+          label="15. eMM11 Valid Upto:"
+          value={formData.emmll_valid_upto}
+          onChange={(e) => handleFormChange("emmll_valid_upto", e.target.value)}
+        />
+        <Input
+          label="16. Traveling Duration : "
+          value={formData.travelling_duration}
+          onChange={(e) =>
+            handleFormChange("travelling_duration", e.target.value)
+          }
+        />
+        <Input
+          label="17. Destination District : "
           value={formData.destination_district}
           onChange={(e) =>
             handleFormChange("destination_district", e.target.value)
@@ -223,53 +280,34 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
         />
 
         <Input
-          label="Distance(Approx in K.M.)"
-          value={formData.distance}
-          onChange={(e) => handleFormChange("distance", e.target.value)}
-        />
-        <Input
-          label="Traveling Duration"
-          value={formData.travelling_duration}
-          onChange={(e) =>
-            handleFormChange("travelling_duration", e.target.value)
-          }
-        />
-
-        <Input
-          label="QTY Transported in (Cubic Meter/Ton for Silica sand)"
-          value={formData.qyt_transported}
-          onChange={(e) => handleFormChange("qyt_transported", e.target.value)}
-        />
-
-        <Input
-          label="Pits Mouth Value(Rs/m3&Rs/Ton for Silica sand)"
+          label="18.Pits Mouth Value(Rs/m3 & Rs/Ton for Silica sand)"
           value={formData.pit_mouth_value}
           onChange={(e) => handleFormChange("pit_mouth_value", e.target.value)}
         />
 
         <hr />
         <Input
-          label="Registration Number"
+          label="1. Registration Number : "
           value={formData.registartion_no}
           onChange={(e) => handleFormChange("registartion_no", e.target.value)}
         />
         <Input
-          label="Type Of Vehicle"
+          label="2. Type Of Vehicle: "
           value={formData.vehicle_type}
           onChange={(e) => handleFormChange("vehicle_type", e.target.value)}
         />
         <Input
-          label="Driver Name"
+          label="3. Name Of Driver :"
           value={formData.driver_name}
           onChange={(e) => handleFormChange("driver_name", e.target.value)}
         />
         <Input
-          label="Driver Mob. No."
+          label="4. Mobile Number Of Driver: "
           value={formData.driver_mobile_no}
           onChange={(e) => handleFormChange("driver_mobile_no", e.target.value)}
         />
         <Input
-          label="DL No."
+          label="5. DL Number Of Driver: "
           value={formData.dl_no_of_driver}
           onChange={(e) => handleFormChange("dl_no_of_driver", e.target.value)}
         />

@@ -15,7 +15,7 @@ export const PdfView = ({ id, afterDownload }) => {
       key: "emmll",
     },
     {
-      label: "Name Of Lessee / Permit Holder",
+      label: "Name Of Lessee / Permit Holder:",
       key: "name_of_lessee",
     },
     {
@@ -23,51 +23,51 @@ export const PdfView = ({ id, afterDownload }) => {
       key: "lessee_mob_no",
     },
     {
-      label: "Tin Number",
+      label: "Tin Number:",
       key: "tin_no",
     },
     {
-      label: "Lessee Id",
+      label: "Lessee Id:",
       key: "lessee_id",
     },
     {
-      label: "Lease Details [Address,Village,(Gata/Khand),Area]",
+      label: "Lease Details [Address,Village,(Gata/Khand),Area]:",
       key: "lessee_details",
     },
     {
-      label: "Tehsil Of Lease",
+      label: "Tehsil Of Lease:",
       key: "tehsil_of_lease",
     },
     {
-      label: "District Of Lease",
+      label: "District Of Lease:",
       key: "district_of_lease",
     },
     {
-      label: "QTY Transported in (Cubic Meter/Ton for Silica sand)",
+      label: "QTY Transported in (Cubic Meter/Ton for Silica sand):",
       key: "qyt_transported",
     },
     {
-      label: "Name Of Mineral",
+      label: "Name Of Mineral:",
       key: "mineral_name",
     },
     {
-      label: "Loading From",
+      label: "Loading From:",
       key: "loading_from",
     },
     {
-      label: "Destination (Delivery Address)",
+      label: "Destination (Delivery Address):",
       key: "destination",
     },
     {
-      label: "Distance(Approx in K.M.)",
+      label: "Distance(Approx in K.M.):",
       key: "distance",
     },
     {
-      label: "eMM11 Generated On",
+      label: "eMM11 Generated On:",
       key: "emmll_generation_date",
     },
     {
-      label: "eMM11 Valid Upto",
+      label: "eMM11 Valid Upto:",
       key: "emmll_valid_upto",
     },
     {
@@ -75,7 +75,7 @@ export const PdfView = ({ id, afterDownload }) => {
       key: "travelling_duration",
     },
     {
-      label: " Destination District",
+      label: " Destination District:",
       key: "destination_district",
     },
     {
@@ -85,11 +85,11 @@ export const PdfView = ({ id, afterDownload }) => {
   ];
 
   const group2Headers = [
-    { label: "Registration Number", key: "registartion_no" },
-    { label: "Type Of Vehicle", key: "driver_name" },
-    { label: "Name Of Driver", key: "vehicle_type" },
-    { label: "Mobile Number Of Driver", key: "driver_mobile_no" },
-    { label: "DL Number Of Driver", key: "dl_no_of_driver" },
+    { label: "Registration Number:", key: "registartion_no" },
+    { label: "Type Of Vehicle:", key: "driver_name" },
+    { label: "Name Of Driver:", key: "vehicle_type" },
+    { label: "Mobile Number Of Driver:", key: "driver_mobile_no" },
+    { label: "DL Number Of Driver:", key: "dl_no_of_driver" },
   ];
 
   const [data, setData] = useState({});
@@ -224,11 +224,12 @@ export const PdfView = ({ id, afterDownload }) => {
               paddingTop: "6pt",
             }}
           >
-            <span className="first-letter">L</span>ease{" "}
-            <sapn className="first-letter">D</sapn>etails &amp; <span>M</span>
+            <span className="s1 first-letter">L</span>ease
+            <span className="s1 first-letter">D</span>etails &amp;
+            <span className="s1 ">M</span>
             ineral
-            <span className="first-letter"> QTY</span> to be{" "}
-            <span className="first-letter">T</span>
+            <span className="s1 first-letter"> QTY</span> to be
+            <span className="s1 first-letter">T</span>
             ransported
           </p>
           <div className="d-flex flex-wrap mb-2">
@@ -282,9 +283,10 @@ export const PdfView = ({ id, afterDownload }) => {
             paddingTop: "6pt",
           }}
         >
-          <span className="first-letter">D</span>etails{" "}
-          <span className="first-letter">O</span>f <span>R</span>egistered
-          <span className="first-letter"> V</span>ehicle
+          <span className="s1 first-letter">D</span>etails
+          <span className="s1 first-letter"> O</span>f
+          <span className="s1 first-letter"> R</span>egistered
+          <span className="s1 first-letter"> V</span>ehicle
         </h2>
         <div className="d-flex flex-wrap mb-2" style={{}}>
           {group2Headers.map((header, index) => (

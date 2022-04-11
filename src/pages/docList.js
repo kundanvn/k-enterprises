@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { collection, doc, deleteDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  deleteDoc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { fireDb } from "../services/firebase";
 import { downloadIcon, editIcon, deleteIcon } from "../assets";
 import { Form } from "./form";
@@ -42,7 +49,9 @@ export const DocList = () => {
   };
 
   const getData = async () => {
-    const res = await getDocs(dataCollectionRef);
+    const res = await getDocs(
+      query(dataCollectionRef, orderBy("emmll", "desc"))
+    );
     setData(res.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
@@ -129,6 +138,7 @@ export const DocList = () => {
             <table className="table table-striped table-hover table-bordered border-primary">
               <thead>
                 <tr className="table-dark">
+                  <th>Sl. No.</th>
                   {headers.map((header, index) => (
                     <th scope="col" key={index} className={header.className}>
                       {header.label}
@@ -139,6 +149,7 @@ export const DocList = () => {
               <tbody>
                 {Object.keys(data).map((dataKey, index1) => (
                   <tr key={index1}>
+                    <th>{index1 + 1}.</th>
                     {headers.map((header, index2) => (
                       <th key={index2} className={header.className}>
                         {header.type === "component"

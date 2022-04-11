@@ -5,6 +5,7 @@ export const Input = ({
   type = "text",
   onChange,
   textarea = false,
+  readOnly,
 }) => {
   return (
     <div className="mb-3 row">
@@ -18,6 +19,7 @@ export const Input = ({
             id={id}
             value={value}
             onChange={onChange}
+            readOnly={readOnly}
           />
         ) : (
           <input
@@ -26,6 +28,7 @@ export const Input = ({
             id={id}
             value={value}
             onChange={onChange}
+            readOnly={readOnly}
           />
         )}
       </div>

@@ -24,7 +24,7 @@ export const ViewPage = () => {
   }, []);
 
   return (
-    <div style={{ margin: "8px", marginTop: "20px" }}>
+    <div>
       {data && (
         <div className="">
           <div className="panel panel-default">
@@ -52,7 +52,7 @@ export const ViewPage = () => {
                 </div>
 
                 <div className="">
-                  Current Date & Time<span id="lbl_CurrentDateTime"></span>
+                  Current Date&Time<span id="lbl_CurrentDateTime"></span>
                 </div>
 
                 <div className=""></div>
