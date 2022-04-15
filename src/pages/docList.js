@@ -28,6 +28,8 @@ export const DocList = () => {
   const [data, setData] = useState({});
 
   const [idToDelete, setIdToDelete] = useState("");
+  const [showRecords, setShowRecords] = useState(false);
+
   const [pdfId, setPDFId] = useState("");
   const dataCollectionRef = collection(fireDb, "pdf-records");
 
@@ -56,8 +58,10 @@ export const DocList = () => {
   };
 
   useEffect(() => {
-    getData();
-  }, [formState]);
+    if (showRecords) {
+      getData();
+    }
+  }, [showRecords]);
 
   const Action = ({ data }) => {
     return (
@@ -145,35 +149,52 @@ export const DocList = () => {
             </button>
           </div>
           <div>
-            <table className="table table-striped table-hover table-bordered border-primary">
-              <thead>
-                <tr className="table-dark">
-                  <th>Sl. No.</th>
-                  {headers.map((header, index) => (
-                    <th scope="col" key={index} className={header.className}>
-                      {header.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Object.keys(data).map((dataKey, index1) => (
-                  <tr key={index1}>
-                    <th>{index1 + 1}.</th>
-                    {headers.map((header, index2) => (
-                      <th key={index2} className={header.className}>
-                        {header.type === "component"
-                          ? header.getComponent({
-                              id: dataKey,
-                              ...data[dataKey],
-                            })
-                          : data[dataKey][header.key]}
+            <div className="alert alert-warning">
+              <div>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowRecords((prevState) => !prevState)}
+                >
+                  {showRecords ? "Hide records" : "Show Records"}
+                </button>
+              </div>
+
+              <small className="text text-danger">
+                Only enable if you want to print/verify the records.
+              </small>
+            </div>
+
+            {showRecords && (
+              <table className="table table-striped table-hover table-bordered border-primary">
+                <thead>
+                  <tr className="table-dark">
+                    <th>Sl. No.</th>
+                    {headers.map((header, index) => (
+                      <th scope="col" key={index} className={header.className}>
+                        {header.label}
                       </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {Object.keys(data).map((dataKey, index1) => (
+                    <tr key={index1}>
+                      <th>{index1 + 1}.</th>
+                      {headers.map((header, index2) => (
+                        <th key={index2} className={header.className}>
+                          {header.type === "component"
+                            ? header.getComponent({
+                                id: dataKey,
+                                ...data[dataKey],
+                              })
+                            : data[dataKey][header.key]}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
         <ToastContainer />
