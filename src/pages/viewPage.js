@@ -107,10 +107,7 @@ export const ViewPage = () => {
                   </label>
                 </div>
                 <div className="">
-                  <span id="lbl_leaseDetails">
-                    {data.lessee_details}
-                    DHURIYA CHUNAR MIRZAPUR , DHURIYAN , (428 B DU) , 5 acre
-                  </span>
+                  <span id="lbl_leaseDetails">{data.lessee_details}</span>
                 </div>
               </div>
 

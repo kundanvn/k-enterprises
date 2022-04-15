@@ -100,12 +100,22 @@ export const DocList = () => {
     {
       label: "eM11",
       key: "emmll",
-      className: "w-50",
+      className: "w-25",
     },
     {
       label: "Vehicle No.",
       key: "registartion_no",
-      className: "w-30",
+      className: "w-10",
+    },
+    {
+      label: "Lessee Name",
+      key: "name_of_lessee",
+      className: "w-10",
+    },
+    {
+      label: "Expires on.",
+      key: "emmll_valid_upto",
+      className: "w-10",
     },
     {
       label: "Actions",

@@ -86,8 +86,8 @@ export const PdfView = ({ id, afterDownload }) => {
 
   const group2Headers = [
     { label: "Registration Number:", key: "registartion_no" },
-    { label: "Type Of Vehicle:", key: "driver_name" },
-    { label: "Name Of Driver:", key: "vehicle_type" },
+    { label: "Type Of Vehicle:", key: "vehicle_type" },
+    { label: "Name Of Driver:", key: "driver_name" },
     { label: "Mobile Number Of Driver:", key: "driver_mobile_no" },
     { label: "DL Number Of Driver:", key: "dl_no_of_driver" },
   ];
@@ -101,28 +101,17 @@ export const PdfView = ({ id, afterDownload }) => {
         if (res && res.data()) {
           setData(res.data());
           setTimeout(() => {
-            var doc = new jsPDF("p", "px", "a4");
             const pdfContainer = document.getElementById("pdf-loader");
-            const qrCodeContainer =
-              document.getElementById("qr-code-container");
 
-            html2canvas(qrCodeContainer).then((canvas) => {
-              var img = canvas.toDataURL("image/jpeg");
-              qrCodeContainer.innerHTML =
-                '<img src="' + img + '" class="img" height="150" width="150">';
-              doc.html(pdfContainer, {
-                x: 0,
-                y: 0,
-                html2canvas: {
-                  scale: 595.26 / 1333, //595.26 is the width of A4 page
-                  scrollY: 0,
-                },
-                callback: (pdf) => {
-                  console.log(data);
-                  pdf.save(`${res?.data()?.emmll || "UnknownEmll"}.pdf`);
-                  afterDownload();
-                },
-              });
+            html2canvas(pdfContainer).then((canvas) => {
+              let imgData = canvas.toDataURL("image/jpeg");
+              const pdf = new jsPDF("p", "pt", "a4");
+              const imgProps = pdf.getImageProperties(imgData);
+              const pdfWidth = pdf.internal.pageSize.getWidth();
+              const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+              pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+              pdf.save(`${res?.data()?.emmll || "UnknownEmll"}.pdf`);
+              afterDownload();
             });
           }, 100);
         }
@@ -136,13 +125,16 @@ export const PdfView = ({ id, afterDownload }) => {
   }, []);
 
   return (
-    <div id="pdf-loader" style={{ width: "1000px", margin: "auto" }}>
+    <div
+      id="pdf-loader"
+      style={{ width: "1000px", margin: "20px auto", paddingTop: "25px" }}
+    >
       <div
         style={{
           border: "2px solid rgb(107, 0, 0)",
           borderRadiusTop: "4px",
           padding: "2px 10px",
-          marginTop: "30px",
+          marginTop: "0px",
           marginBottom: "0",
         }}
       >
