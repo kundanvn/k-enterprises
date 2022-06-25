@@ -68,91 +68,91 @@ export const Form = ({ type = "add", idToEdit, onClose = () => {} }) => {
     setFromData(res.data());
   };
 
-  const updateSerialNo = () => {
+  const updateSerialNo = async () => {
     const serialNoDoc = doc(fireDb, "serial-no", serialNoRecordId);
-    updateDoc(serialNoDoc, { currentValue: serialNo })
-      .then(() => {
-        toast("Added document successfully!", { type: "success" });
-        onClose();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+
+    try {
+      const res = await updateDoc(serialNoDoc, { currentValue: serialNo });
+      toast("Added document successfully!", { type: "success" });
+      onClose();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (type === "add") {
-      addDoc(dataCollectionRef, { ...formData, emmll: serialNo })
-        .then((res) => {
-          updateSerialNo();
-        })
-        .catch((e) => {
-          toast("Something went wrong!", { type: "error" });
+      try {
+        const res = await addDoc(dataCollectionRef, {
+          ...formData,
+          emmll: serialNo,
         });
+        updateSerialNo();
+      } catch {
+        toast("Something went wrong!", { type: "error" });
+      }
     } else if (type === "edit") {
       const docRef = doc(fireDb, "pdf-records", idToEdit);
-      updateDoc(docRef, formData)
-        .then((res) => {
-          toast("Document Updated successfully!", { type: "success" });
-          onClose();
-        })
-        .catch((e) => {
-          toast("Something went wrong!", { type: "error" });
-        });
+      try {
+        const res = await updateDoc(docRef, formData);
+        toast("Document Updated successfully!", { type: "success" });
+        onClose();
+      } catch {
+        toast("Something went wrong!", { type: "error" });
+      }
     } else if (type === "defaults") {
       if (defaultId) {
         const defaultDocRef = doc(fireDb, "defaults", defaultId);
-        updateDoc(defaultDocRef, formData)
-          .then((res) => {
-            toast("Successfully updated default setting", { type: "success" });
-            onClose();
-          })
-          .catch((e) => {
-            console.log({ e });
-            toast("Something went wrong", { type: "warning" });
-          });
+
+        try {
+          const res = await updateDoc(defaultDocRef, formData);
+          toast("Successfully updated default setting", { type: "success" });
+          onClose();
+        } catch (e) {
+          console.log({ e });
+          toast("Something went wrong", { type: "warning" });
+        }
       } else {
-        addDoc(defaultCollectionRef, formData)
-          .then((res) => {
-            toast("Successfully updated default setting", { type: "success" });
-            onClose();
-          })
-          .catch((e) => {
-            toast("Something went wrong", { type: "warning" });
-          });
+        const res = addDoc(defaultCollectionRef, formData);
+        try {
+          toast("Successfully updated default setting", { type: "success" });
+          onClose();
+        } catch {
+          toast("Something went wrong", { type: "warning" });
+        }
       }
     }
   };
 
-  const getDefaults = () => {
-    getDocs(defaultCollectionRef)
-      .then((res) => {
-        const data = res.docs;
-        if (data.length > 0) {
-          setFromData(data[0].data());
-          setDefaultId(data[0].id);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        toast("Unable to load defaults", { type: "error" });
-      });
+  const getDefaults = async () => {
+    try {
+      const res = await getDocs(defaultCollectionRef);
+      const data = res.docs;
+
+      if (data.length > 0) {
+        setFromData(data[0].data());
+        setDefaultId(data[0].id);
+      }
+    } catch (e) {
+      console.log(e);
+      toast("Unable to load defaults", { type: "error" });
+    }
   };
 
-  const getSerialNo = () => {
-    getDocs(serialNoRef)
-      .then((res) => {
-        const data = res.docs;
-        if (data.length > 0) {
-          const dataObj = data[0].data();
-          const serialNo = dataObj.currentValue + randomIntFromInterval(7, 40);
-          setSerialNoRecordId(data[0].id);
-          setSerialNo(serialNo);
-        }
-      })
-      .catch((e) => {
-        toast("Unable to load serial number");
-      });
+  const getSerialNo = async () => {
+    try {
+      const res = await getDocs(serialNoRef);
+      const data = res.docs;
+
+      if (data.length > 0) {
+        const dataObj = data[0].data();
+        const serialNo = dataObj.currentValue + randomIntFromInterval(7, 40);
+        setSerialNoRecordId(data[0].id);
+        setSerialNo(serialNo);
+      }
+    } catch {
+      toast("Unable to load serial number");
+    }
   };
 
   useState(() => {

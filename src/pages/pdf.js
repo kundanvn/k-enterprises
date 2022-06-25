@@ -3,11 +3,23 @@ import QRCode from "react-qr-code";
 import Barcode from "react-barcode";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { toast } from "react-toastify";
+import { doc, getDoc } from "firebase/firestore";
 import { PdfLogo } from "../components/pdfLogo";
 import { fireDb } from "../services/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import "./pdf.css";
-import { toast } from "react-toastify";
+
+const generateString = (length) => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  const charactersLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+};
 
 export const PdfView = ({ id, afterDownload }) => {
   const group1Headers = [
@@ -94,32 +106,44 @@ export const PdfView = ({ id, afterDownload }) => {
   ];
 
   const [data, setData] = useState({});
+  const randomString = generateString(5);
 
-  const getData = () => {
+  const generatePdf = async (resData) => {
+    const pdfContainer = document.getElementById("pdf-loader");
+
+    try {
+      // Convert the container into canvas
+      const canvas = await html2canvas(pdfContainer);
+
+      let imgData = canvas.toDataURL("image/jpeg");
+      // New JS pdf for a4 size paper
+      const pdf = new jsPDF("p", "pt", "a4");
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`${resData?.emmll || "UnknownEmll"}.pdf`);
+      // Remove the dom from UI after loading the data
+      afterDownload();
+    } catch {
+      toast("Something went wrong can't download file", { type: "error" });
+    }
+  };
+
+  const getData = async () => {
     const docRef = doc(fireDb, "pdf-records", id);
-    getDoc(docRef)
-      .then((res) => {
-        if (res && res.data()) {
-          setData(res.data());
-          setTimeout(() => {
-            const pdfContainer = document.getElementById("pdf-loader");
 
-            html2canvas(pdfContainer).then((canvas) => {
-              let imgData = canvas.toDataURL("image/jpeg");
-              const pdf = new jsPDF("p", "pt", "a4");
-              const imgProps = pdf.getImageProperties(imgData);
-              const pdfWidth = pdf.internal.pageSize.getWidth();
-              const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-              pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-              pdf.save(`${res?.data()?.emmll || "UnknownEmll"}.pdf`);
-              afterDownload();
-            });
-          }, 100);
-        }
-      })
-      .catch((e) => {
-        toast("Something went wrong can't download file", { type: "error" });
-      });
+    try {
+      const res = await getDoc(docRef);
+      const resData = res.data();
+
+      if (res && resData) {
+        setData(resData);
+        setTimeout(() => generatePdf(resData), 100);
+      }
+    } catch (e) {
+      toast("Something went wrong can't download file", { type: "error" });
+    }
   };
 
   useEffect(() => {
@@ -172,17 +196,19 @@ export const PdfView = ({ id, afterDownload }) => {
               </div>
               <div style={{ marginLeft: "20px" }}>
                 <Barcode
-                  width={2.3}
-                  value={data.emmll}
+                  width={3}
+                  value={`${data.emmll}${randomString}`}
                   textMargin={0}
-                  height={90}
+                  height={60}
                   displayValue={false}
                 />
                 <div className="barcode-text">
                   <span style={{ marginTop: "3px" }}>*</span>
-                  {`${data.emmll}`?.split("")?.map((key, index) => (
-                    <span key={index}>{key}</span>
-                  ))}
+                  {`${data.emmll}${randomString}`
+                    ?.split("")
+                    ?.map((key, index) => (
+                      <span key={index}>{key}</span>
+                    ))}
                   <span style={{ marginTop: "3px" }}>*</span>
                 </div>
               </div>

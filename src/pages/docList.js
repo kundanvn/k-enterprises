@@ -7,17 +7,18 @@ import {
   getDocs,
   orderBy,
   query,
+  limit,
 } from "firebase/firestore";
+import "bootstrap";
 import { fireDb } from "../services/firebase";
 import { downloadIcon, editIcon, deleteIcon } from "../assets";
 import { Form } from "./form";
 import { DeleteWarning, Header } from "../components";
 import { PdfView } from "./pdf";
+
 import "react-toastify/dist/ReactToastify.css";
-import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../index.css";
-import tempData from '../response.json'
 
 export const DocList = () => {
   const [formState, setFormState] = useState({
@@ -27,42 +28,47 @@ export const DocList = () => {
   });
 
   const [data, setData] = useState({});
+  const [pdfId, setPDFId] = useState("");
 
   const [idToDelete, setIdToDelete] = useState("");
   const [showRecords, setShowRecords] = useState(false);
 
-  const [pdfId, setPDFId] = useState("");
   const dataCollectionRef = collection(fireDb, "pdf-records");
 
   const onDelete = (id) => {
     setIdToDelete(id);
   };
 
-  const deleteRecord = () => {
+  const deleteRecord = async () => {
     const docRef = doc(fireDb, "pdf-records", idToDelete);
-    deleteDoc(docRef)
-      .then((res) => {
-        setIdToDelete("");
-        toast("Document deleted successfully!", { type: "success" });
-        getData();
-      })
-      .catch((e) => {
-        toast("Something went wrong!", { type: "error" });
-      });
+    
+    try {
+      const res = await deleteDoc(docRef);
+      setIdToDelete("");
+      toast("Document deleted successfully!", { type: "success" });
+      getData();
+    } catch {
+      toast("Something went wrong!", { type: "error" });
+    }
   };
 
   const getData = async () => {
     const res = await getDocs(
-      query(dataCollectionRef, orderBy("emmll", "desc"))
+      query(
+        dataCollectionRef,
+        orderBy("emmll", "desc")
+      )
     );
+
     setData(res.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
   useEffect(() => {
-    // if (showRecords) {
-    //   getData();
-    // }
+    if (showRecords) {
+      getData();
+    }
   }, [showRecords]);
+
 
   const Action = ({ data }) => {
     return (
@@ -76,7 +82,7 @@ export const DocList = () => {
                       "Download in progress. Please try after few seconds",
                       { type: "info" }
                     )
-                : () => setPDFId("hello")
+                : () => setPDFId(data.id)
             }
           >
             <img src={downloadIcon} height="30px" />
@@ -136,8 +142,7 @@ export const DocList = () => {
           setFormState({ mode: "defaults", show: true, idToEdit: "" })
         }
       />
-      <Action data={tempData}/>
-      {/* <div>
+      <div>
         <div className=" card  ">
           <div className="card-body d-flex justify-content-between p-2">
             <h3>Documents</h3>
@@ -216,7 +221,7 @@ export const DocList = () => {
             onConfirm={deleteRecord}
           />
         )}
-      </div> */}
+      </div>
       {pdfId && <PdfView id={pdfId} afterDownload={() => setPDFId("")} />}
     </>
   );
