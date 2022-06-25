@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../index.css";
+import tempData from '../response.json'
 
 export const DocList = () => {
   const [formState, setFormState] = useState({
@@ -58,9 +59,9 @@ export const DocList = () => {
   };
 
   useEffect(() => {
-    if (showRecords) {
-      getData();
-    }
+    // if (showRecords) {
+    //   getData();
+    // }
   }, [showRecords]);
 
   const Action = ({ data }) => {
@@ -75,7 +76,7 @@ export const DocList = () => {
                       "Download in progress. Please try after few seconds",
                       { type: "info" }
                     )
-                : () => setPDFId(data.id)
+                : () => setPDFId("hello")
             }
           >
             <img src={downloadIcon} height="30px" />
@@ -135,7 +136,8 @@ export const DocList = () => {
           setFormState({ mode: "defaults", show: true, idToEdit: "" })
         }
       />
-      <div>
+      <Action data={tempData}/>
+      {/* <div>
         <div className=" card  ">
           <div className="card-body d-flex justify-content-between p-2">
             <h3>Documents</h3>
@@ -214,7 +216,7 @@ export const DocList = () => {
             onConfirm={deleteRecord}
           />
         )}
-      </div>
+      </div> */}
       {pdfId && <PdfView id={pdfId} afterDownload={() => setPDFId("")} />}
     </>
   );

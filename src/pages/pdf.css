@@ -70,3 +70,22 @@ p {
   border-top: 1px solid gray;
   margin-top: 10px;
 }
+
+.generate-pdf-text {
+  color: gray;
+  display: inline-block;
+}
+
+.generate-pdf-text::first-letter {
+  font-size: 18px;
+}
+
+.barcode-text {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0 2px;
+  transform: translate(0, -12px);
+}
+.barcode-text:first-child{
+  margin-top: 5px;
+}

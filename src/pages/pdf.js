@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import QRCode from "react-qr-code";
+import Barcode from "react-barcode";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { PdfLogo } from "../components/pdfLogo";
@@ -120,6 +121,7 @@ export const PdfView = ({ id, afterDownload }) => {
         toast("Something went wrong can't download file", { type: "error" });
       });
   };
+
   useEffect(() => {
     getData();
   }, []);
@@ -148,18 +150,44 @@ export const PdfView = ({ id, afterDownload }) => {
             className="d-flex justify-content-between align-items-end"
             style={{ marginBottom: "20px" }}
           >
-            <a
-              href="#"
-              style={{
-                fontWeight: "bold",
-                fontSize: "1.2rem",
-                fontFamily: "Times New Roman, serif",
-                color: "rgb(0, 0, 183)",
-                marginLeft: "20px",
-              }}
-            >
-              Back
-            </a>
+            <div>
+              <div>
+                <div style={{ marginLeft: "20px" }}>
+                  <span className="generate-pdf-text">GENERATE</span>
+                  <span> </span>
+                  <span className="generate-pdf-text">PDF</span>
+                </div>
+                <a
+                  href="#"
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "1.2rem",
+                    fontFamily: "Times New Roman, serif",
+                    color: "rgb(0, 0, 183)",
+                    marginLeft: "10px",
+                  }}
+                >
+                  Back
+                </a>
+              </div>
+              <div style={{ marginLeft: "20px" }}>
+                <Barcode
+                  width={2.3}
+                  value={data.emmll}
+                  textMargin={0}
+                  height={90}
+                  displayValue={false}
+                />
+                <div className="barcode-text">
+                  <span style={{ marginTop: "3px" }}>*</span>
+                  {`${data.emmll}`?.split("")?.map((key, index) => (
+                    <span key={index}>{key}</span>
+                  ))}
+                  <span style={{ marginTop: "3px" }}>*</span>
+                </div>
+              </div>
+            </div>
+
             <div id="qr-code-container" style={{ height: "150", width: "150" }}>
               <span id="qr-canvas">
                 <QRCode
@@ -170,6 +198,7 @@ export const PdfView = ({ id, afterDownload }) => {
               </span>
             </div>
           </div>
+
           <div
             className="horizontal-line"
             style={{ marginBottom: "20px" }}
